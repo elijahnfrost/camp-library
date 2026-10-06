@@ -1,4 +1,0 @@
-{
-  "ignores": ["@modelcontextprotocol/sdk", "zod"],
-  "ignore-patterns": ["tools/**", ".next/**", "dist/**", "build/**"]
-}

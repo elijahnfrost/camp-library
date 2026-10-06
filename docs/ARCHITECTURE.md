@@ -111,6 +111,5 @@ selectors.
 ## Detectors & gates (dev-only)
 
 `npm run` — `typecheck`, `test`, `build`, `lint:design-tokens`, `lint:css-hygiene`;
-report-only: `report:deadcode` (knip), `report:deps` (depcheck), `report:exports`
-(ts-prune), `report:css`. See `docs/cleanup-notes.md` for the cleanup effort's
+report-only: `report:deadcode` (knip), `report:css`. See `docs/cleanup-notes.md` for the cleanup effort's
 running notes.
