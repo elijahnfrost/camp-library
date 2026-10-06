@@ -40,22 +40,15 @@ npm run typecheck && npm run test && npm run lint:design-tokens && npm run build
 | Script | Tool | Covers | Config |
 | --- | --- | --- | --- |
 | `npm run report:deadcode` | knip | unused files, exports, types, deps | `knip.json` |
-| `npm run report:deps` | depcheck | unused / missing deps | `.depcheckrc.json` |
-| `npm run report:exports` | ts-prune | unused exports (2nd opinion) | — |
 | `npm run report:css` | `scripts/report-unused-css.mjs` | dead CSS class selectors | in-script |
 
 **knip is authoritative** for TS/deps (its Next/Playwright/Vitest plugins
-understand file conventions). **ts-prune is a noisy second opinion** — it flags
-Next conventions (`default`, `metadata`, `GET`, `dynamic`, route handlers) as
-unused; ignore those, use it only to cross-check knip's real hits.
+understand file conventions).
 
 ### Baseline counts (Phase 0 — the numbers Phase 1 drives toward zero)
 
 - **knip**: 1 unused file, 77 unused exports, 26 unused exported types, **0 unused deps**.
   - Unused file: `lib/calendar/nowNext.ts` (export `useTodayNowNext`).
-- **depcheck**: 0 unused runtime deps, 0 missing. 2 devDeps flagged = **false
-  positives, allowlisted** (see below).
-- **ts-prune**: 82 raw findings, ~majority Next-convention false positives.
 - **CSS report**: 1433 class selectors → 1177 referenced, 118 dynamic
   (allowlist), 28 library, **110 unreferenced (dead candidates)**.
 
@@ -100,22 +93,20 @@ emitted by libraries and we only theme them:
 
 Encoded in `LIBRARY_PREFIXES` in `scripts/report-unused-css.mjs`.
 
-### 3. depcheck dependency allowlist
+### 3. Nested-package dependencies
 
-- `@modelcontextprotocol/sdk`, `zod` — declared in **root** devDependencies but
+- `@modelcontextprotocol/sdk`, `zod` are declared in **root** devDependencies but
   imported by `tools/camp-mcp/src/server.ts` (a nested package with an empty
-  `package.json`). depcheck can't cross the nested-package boundary and reports
-  them unused. **Keep them.** Ignored in `.depcheckrc.json`. (knip already sees
-  them as used and does not flag them.)
+  `package.json`). **Keep them.** knip sees them as used and does not flag them.
 
-### 4. knip / ts-prune false-positive guards for Phase 1
+### 4. knip false-positive guards for Phase 1
 
-Before removing anything knip/ts-prune flags, exclude code that is reachable by
+Before removing anything knip flags, exclude code that is reachable by
 a means the tool can't see:
 
 - **Next file conventions** — `default`/`metadata`/`viewport`/`dynamic`/`runtime`
   exports on `page`/`layout`/`route`/`error`/`not-found`; route handlers
-  (`GET`/`POST`/…). knip handles these; ts-prune does not.
+  (`GET`/`POST`/…). knip handles these.
 - **Tests** — symbols imported only by `*.test.ts` / `*.spec.ts`.
 - **Dynamic `import()`** and string-referenced modules.
 - **Public API by design** — a registry like `DOC_VALIDATORS` /`*Doc` in
@@ -128,8 +119,7 @@ a means the tool can't see:
 
 ## Phase 1 — DONE
 
-All detectors clean: `knip` 0 unused files/exports/types/deps; `depcheck` 0
-unused (sdk+zod allowlisted) / 0 missing; `report:css` 0 dead selectors. Gates
+All detectors clean: `knip` 0 unused files/exports/types/deps; `report:css` 0 dead selectors. Gates
 green at every commit. Commits: dead CSS selectors; 7 scratch PNGs; unused
 file + functions + orphaned CSS; unexport in-module symbols + dead re-exports.
 
@@ -156,7 +146,7 @@ gate after each batch.
 
 - **Unused file**: `lib/calendar/nowNext.ts`.
 - **Unused exports / types**: 77 + 26 from knip (de-export if used in-module;
-  delete if fully dead). Cross-check with `npm run report:exports`.
+  delete if fully dead).
 - **Dead CSS clusters** (report-confirmed unreferenced, matching the brief's
   named removals):
   - `.caltoday*` — old Today card (fully dead).
