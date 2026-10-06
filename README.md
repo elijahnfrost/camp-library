@@ -1,4 +1,4 @@
-<p align="center"><img src=".github/icon.svg" width="88" alt=""></p>
+<p align="center"><img src="public/icon.svg" width="88" alt=""></p>
 <h1 align="center">Camp Library</h1>
 <p align="center"><a href="https://camplibrary.com">camplibrary.com</a></p>
 
