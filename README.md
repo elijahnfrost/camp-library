@@ -1,4 +1,6 @@
-# Camp Library
+<p align="center"><img src=".github/icon.svg" width="88" alt=""></p>
+<h1 align="center">Camp Library</h1>
+<p align="center"><a href="https://camplibrary.com">camplibrary.com</a></p>
 
 A warm, hand-drawn catalog of camp **games, crafts, songs, water games, and quiet-time
 activities** — paired with a **Google-Calendar-style calendar** for planning the camp
