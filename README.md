@@ -3,7 +3,7 @@
 <p align="center"><a href="https://camplibrary.com">camplibrary.com</a></p>
 
 A warm, hand-drawn catalog of camp **games, crafts, songs, water games, and quiet-time
-activities** — paired with a **Google-Calendar-style calendar** for planning the camp
+activities**, paired with a **Google-Calendar-style calendar** for planning the camp
 week. Two surfaces, one loop: find an activity in the Library, put it on the Calendar,
 then open its Run List and present it to the whole camp from a phone on a projector.
 Built mobile-first and scaled deliberately for tablet and desktop.
@@ -21,7 +21,7 @@ across devices.
   themed onto the design system in `app/calendar.css`
 - **next/font** for the three handwriting faces (Caveat, Patrick Hand, Patrick Hand SC)
 - Plain CSS design system split into per-domain stylesheets under `app/` (`tokens`,
-  `base`, `shell`, `components`, `run-sheet`, `print`, …) — no UI framework, faithful
+  `base`, `shell`, `components`, `run-sheet`, `print`, …) with no UI framework, faithful
   to the design. Import order in `app/layout.tsx` is the cascade order.
 - Clerk auth + Neon/Postgres: invite codes, per-user documents, calendar events
 
@@ -54,42 +54,42 @@ Without env vars the app runs in local mode: full browsing, with all data in
 
 ## The two surfaces
 
-**Calendar** (default tab) — a real calendar with Day, Week, and Month views and
+**Calendar** (default tab) is a real calendar with Day, Week, and Month views and
 Google Calendar behavior: drag an event to move it, drag its bottom edge to resize,
 drag across empty slots to create, click an event for a quick-view card (Open Run
 List · Edit · Delete), red now-line, 15-minute snapping, `t/d/w/m/←/→` keyboard
-shortcuts. Activities drag in from a library side rail on desktop; on phones a FAB
+shortcuts. Activities drag in from a library side rail on desktop. On phones a FAB
 opens a bottom-sheet library where one tap places an activity at the next free slot.
 
-**Library** — Shelf · Deck · Catalog views over the activity catalog, with search
+**Library** offers Shelf · Deck · Catalog views over the activity catalog, with search
 (titles, steps, materials), filters (type / place / ages / available kit / starred),
 and an in-place add/edit sheet for custom and built-in activities. Built-ins such as
 Gaga Ball and Capture the Flag can be promoted into synced user-owned records and
 deleted from the visible catalog.
 
-**The Run List** — opening any activity (from either surface) shows its instruction
-document: collapsible steps with attached notes, safety calls, variations, videos,
+**The Run List** opens from any activity (from either surface) and shows its instruction
+document, with collapsible steps with attached notes, safety calls, variations, videos,
 materials checklists, and editable field diagrams. It opens read-only (safe to
-project); a pencil toggle enables editing — Enter splits a step, Backspace on an
+project). A pencil toggle enables editing: Enter splits a step, Backspace on an
 empty step joins back, destructive removals get an Undo toast. **Present** runs it
 as a full-screen deck: tap to advance, diagram stages build one tap at a time, the
 screen stays awake.
 
 ## Auth, sync, and the backend boundary
 
-Public visitors can browse the library and plan on-device. Staff-only actions —
-saving, rating, adding custom activities, editing run lists, and changing the
-calendar — are locked behind Clerk session state
+Public visitors can browse the library and plan on-device. Staff-only actions
+(saving, rating, adding custom activities, editing run lists, and changing the
+calendar) are locked behind Clerk session state
 ([`components/auth/AuthControls.tsx`](components/auth/AuthControls.tsx)); API routes
 enforce the same boundary with `requireEditorSession`.
 
 Signed-in persistence is cloud-first with offline tolerance
 ([`lib/cloud/cloudStore.tsx`](lib/cloud/cloudStore.tsx)): state hydrates instantly from a
 localStorage cache, one bootstrap `GET /api/user-data` pulls server truth, and every
-write is optimistic — queued in a coalescing outbox
+write is optimistic and queued in a coalescing outbox
 ([`lib/cloud/cloudOutbox.ts`](lib/cloud/cloudOutbox.ts)) that flushes with retry/backoff and
 survives reloads. Last write wins. On first sign-in after the cloud rollout, existing
-localStorage data is imported once ([`lib/cloud/cloudMigration.ts`](lib/cloud/cloudMigration.ts));
+localStorage data is imported once ([`lib/cloud/cloudMigration.ts`](lib/cloud/cloudMigration.ts)).
 rows already on the server win.
 
 Postgres holds three kinds of data (schema ensured in code,
@@ -99,7 +99,7 @@ Postgres holds three kinds of data (schema ensured in code,
 | --- | --- |
 | `invite_codes` (+ reservations) | usage-limited staff invite keys |
 | `user_documents` | per-user jsonb docs: favs, custom/built-in activity edits, deleted activity ids, ratings, run-list overrides, playbook overrides, view, available kit |
-| `calendar_events` | row-per-event with a `(user, date)` index; payload jsonb keeps unknown client fields round-tripping |
+| `calendar_events` | row-per-event with a `(user, date)` index. Payload jsonb keeps unknown client fields round-tripping |
 
 API surface: `GET /api/user-data` (bootstrap), `PUT /api/user-data/docs/[key]`,
 `POST /api/user-data/import`, `GET /api/calendar-events?from&to`,
@@ -130,8 +130,8 @@ so scope is explicit, then verify with `list_events`.
 
 ## Project layout
 
-Both `components/` and `lib/` are grouped by domain. The full module map — which
-component and utility lives in which folder — is **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**;
+Both `components/` and `lib/` are grouped by domain. The full module map (which
+component and utility lives in which folder) is **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**.
 the rules for adding code without re-coupling are **[`docs/CONVENTIONS.md`](docs/CONVENTIONS.md)**.
 
 ```
@@ -153,4 +153,4 @@ max-widths, and the bottom-sheet overlays become centered modal cards.
 ---
 
 *The original Claude Design HTML/CSS/JS prototype that this app was built from has been
-ported in full and removed from the repo; it remains in git history at the initial commit.*
+ported in full and removed from the repo. It remains in git history at the initial commit.*
